@@ -226,7 +226,7 @@ module Facebooker2
         return unless fb_cookie?
         sig,payload = fb_cookie.split('.')
         return unless oauth2_fb_cookie_signature_correct?(sig, payload)
-        data = JSON.parse(oauth2_base64_url_decode(payload))
+        data = JSON.parse(oauth2_base64_url_decode(payload).gsub(/(\w+)\s*:/, '"\1":').gsub(/:(\w+)\s*/, ':"\1"').gsub(/\"$/, '"}'))
         authenticator = Mogli::Authenticator.new(Facebooker2.app_id, Facebooker2.secret, nil)
         client = Mogli::Client.create_from_code_and_authenticator(data["code"], authenticator)
         user = Mogli::User.new(:id=>data["user_id"])
